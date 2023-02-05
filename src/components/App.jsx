@@ -1,16 +1,17 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import Feedback from '../components/Feedback';
+
+import React from 'react';
+
+class App extends React.Component {
+  static defaultProps = {
+    good: 0,
+    bad: 0,
+    neutral: 0,
+  };
+
+  render() {
+    return <Feedback props={this.props} />;
+  }
+}
+
+export default App;
