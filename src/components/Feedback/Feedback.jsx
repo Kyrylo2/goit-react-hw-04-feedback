@@ -1,38 +1,42 @@
 import { useState } from 'react';
-import Statistics from './Statistics';
+import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
+
 import FeedbackOptions from './FeedbackOptions';
+import Statistics from './Statistics';
 import Notification from '../Notification';
 import Section from './Section';
-import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
 
-const FeedbackDiv = styled.div`
+const FeedbackContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
 `;
 
-export default function Feedback({ props }) {
-  const { good: goodProps, bad: badProps, neutral: neutralProps } = props;
+export default function Feedback({
+  good: initialGood,
+  bad: initialBad,
+  neutral: initialNeutral,
+}) {
+  const [good, setGood] = useState(initialGood);
+  const [bad, setBad] = useState(initialBad);
+  const [neutral, setNeutral] = useState(initialNeutral);
 
-  const [good, setGood] = useState(goodProps);
-  const [bad, setBad] = useState(badProps);
-  const [neutral, setNeutral] = useState(neutralProps);
-
-  const handleCount = e => {
-    switch (e.target.innerText) {
+  const handleCount = option => {
+    switch (option) {
       case 'good':
-        setGood(prevState => prevState + 1);
+        setGood(prev => prev + 1);
         break;
 
       case 'bad':
-        setBad(prevState => prevState + 1);
+        setBad(prev => prev + 1);
         break;
 
       case 'neutral':
-        setNeutral(prevState => prevState + 1);
+        setNeutral(prev => prev + 1);
         break;
+
       default:
         return;
     }
@@ -44,17 +48,13 @@ export default function Feedback({ props }) {
     setNeutral(0);
   };
 
-  const countTotalFeedback = () => {
-    return good + bad + neutral;
-  };
+  const total = good + bad + neutral;
 
-  const countPositiveFeedbackPercentage = () => {
-    return Math.round((good * 100) / countTotalFeedback());
-  };
+  const positivePercentage = Math.round((good / total) * 100);
 
   return (
-    <FeedbackDiv>
-      <Section title="Plese leave a feedback">
+    <FeedbackContainer>
+      <Section title="Please leave your feedback">
         <FeedbackOptions
           options={['good', 'bad', 'neutral']}
           onLeaveFeedback={handleCount}
@@ -62,27 +62,29 @@ export default function Feedback({ props }) {
       </Section>
 
       <Section title="Statistics">
-        {countTotalFeedback() > 0 ? (
+        {total === 0 ? (
+          <Notification message="There is no feedback yet" />
+        ) : (
           <>
             <button type="button" onClick={clearState}>
-              Clear Stat
+              Clear Stats
             </button>
             <Statistics
               good={good}
-              neutral={neutral}
               bad={bad}
-              total={countTotalFeedback()}
-              positivePercentage={countPositiveFeedbackPercentage()}
+              neutral={neutral}
+              total={total}
+              positivePercentage={positivePercentage}
             />
           </>
-        ) : (
-          <Notification message="There is no feedback" />
         )}
       </Section>
-    </FeedbackDiv>
+    </FeedbackContainer>
   );
 }
 
 Feedback.propTypes = {
-  props: PropTypes.object,
+  good: PropTypes.number.isRequired,
+  bad: PropTypes.number.isRequired,
+  neutral: PropTypes.number.isRequired,
 };
