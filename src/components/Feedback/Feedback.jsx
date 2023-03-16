@@ -14,17 +14,13 @@ const FeedbackContainer = styled.div`
   gap: 20px;
 `;
 
-export default function Feedback({
-  good: initialGood,
-  bad: initialBad,
-  neutral: initialNeutral,
-}) {
+export default function Feedback({ initialGood, initialBad, initialNeutral }) {
   const [good, setGood] = useState(initialGood);
   const [bad, setBad] = useState(initialBad);
   const [neutral, setNeutral] = useState(initialNeutral);
 
   const handleCount = option => {
-    switch (option) {
+    switch (option.target.innerText) {
       case 'good':
         setGood(prev => prev + 1);
         break;
@@ -84,7 +80,7 @@ export default function Feedback({
 }
 
 Feedback.propTypes = {
-  good: PropTypes.number.isRequired,
-  bad: PropTypes.number.isRequired,
-  neutral: PropTypes.number.isRequired,
+  initialGood: PropTypes.number.isRequired,
+  initialBad: PropTypes.number.isRequired,
+  initialNeutral: PropTypes.number.isRequired,
 };
